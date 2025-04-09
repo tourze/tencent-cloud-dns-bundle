@@ -2,6 +2,7 @@
 
 namespace TencentCloudDnsBundle\Command;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -22,6 +23,7 @@ class SyncDomainRecordToLocalCommand extends Command
     public function __construct(
         private readonly DnsDomainRepository $domainRepository,
         private readonly DnsRecordRepository $recordRepository,
+        private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
         private readonly DnsService $dnsService,
     ) {
@@ -56,7 +58,8 @@ class SyncDomainRecordToLocalCommand extends Command
             $record->setType(DnsRecordType::tryFrom($item->getType()));
             $record->setValue($item->getValue());
             $record->setTtl($item->getTTL());
-            $this->recordRepository->save($record);
+            $this->entityManager->persist($record);
+            $this->entityManager->flush();
             $output->writeln("发现子域名：{$record->getName()}");
         }
     }
