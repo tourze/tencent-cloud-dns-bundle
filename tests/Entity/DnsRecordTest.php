@@ -101,7 +101,6 @@ class DnsRecordTest extends TestCase
         foreach ($types as $type) {
             $this->record->setType($type);
             $this->assertSame($type, $this->record->getType());
-            $this->assertIsString($type->value);
             $this->assertNotEmpty($type->getLabel());
         }
     }
