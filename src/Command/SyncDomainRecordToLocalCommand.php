@@ -17,9 +17,10 @@ use TencentCloudDnsBundle\Repository\DnsDomainRepository;
 use TencentCloudDnsBundle\Repository\DnsRecordRepository;
 use TencentCloudDnsBundle\Service\DnsService;
 
-#[AsCommand(name: 'tencent-cloud-dns:sync-domain-record-to-local', description: '同步域名信息到本地')]
+#[AsCommand(name: self::NAME, description: '同步域名信息到本地')]
 class SyncDomainRecordToLocalCommand extends Command
 {
+    public const NAME = 'tencent-cloud-dns:sync-domain-record-to-local';
     public function __construct(
         private readonly DnsDomainRepository $domainRepository,
         private readonly DnsRecordRepository $recordRepository,
