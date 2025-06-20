@@ -54,12 +54,12 @@ class DnsDomainTest extends TestCase
         $this->assertEquals($updatedBy, $this->domain->getUpdatedBy());
 
         // 测试 createTime 属性
-        $createTime = new \DateTime();
+        $createTime = new \DateTimeImmutable();
         $this->domain->setCreateTime($createTime);
         $this->assertSame($createTime, $this->domain->getCreateTime());
 
         // 测试 updateTime 属性
-        $updateTime = new \DateTime();
+        $updateTime = new \DateTimeImmutable();
         $this->domain->setUpdateTime($updateTime);
         $this->assertSame($updateTime, $this->domain->getUpdateTime());
     }

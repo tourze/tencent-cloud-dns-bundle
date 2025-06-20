@@ -47,12 +47,12 @@ class AccountTest extends TestCase
         $this->assertEquals($updatedBy, $this->account->getUpdatedBy());
 
         // 测试 createTime 属性
-        $createTime = new \DateTime();
+        $createTime = new \DateTimeImmutable();
         $this->account->setCreateTime($createTime);
         $this->assertSame($createTime, $this->account->getCreateTime());
 
         // 测试 updateTime 属性
-        $updateTime = new \DateTime();
+        $updateTime = new \DateTimeImmutable();
         $this->account->setUpdateTime($updateTime);
         $this->assertSame($updateTime, $this->account->getUpdateTime());
     }

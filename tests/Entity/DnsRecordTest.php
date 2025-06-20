@@ -71,12 +71,12 @@ class DnsRecordTest extends TestCase
         $this->assertEquals($updatedBy, $this->record->getUpdatedBy());
 
         // 测试 createTime 属性
-        $createTime = new \DateTime();
+        $createTime = new \DateTimeImmutable();
         $this->record->setCreateTime($createTime);
         $this->assertSame($createTime, $this->record->getCreateTime());
 
         // 测试 updateTime 属性
-        $updateTime = new \DateTime();
+        $updateTime = new \DateTimeImmutable();
         $this->record->setUpdateTime($updateTime);
         $this->assertSame($updateTime, $this->record->getUpdateTime());
     }
