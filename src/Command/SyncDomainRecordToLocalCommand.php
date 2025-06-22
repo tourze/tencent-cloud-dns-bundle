@@ -50,10 +50,10 @@ class SyncDomainRecordToLocalCommand extends Command
                 'domain' => $domain,
                 'recordId' => $item->getRecordId(),
             ]);
-            if (!$record) {
+            if ($record === null) {
                 $record = new DnsRecord();
                 $record->setDomain($domain);
-                $record->setRecordId($item->getRecordId());
+                $record->setRecordId((string) $item->getRecordId());
             }
             $record->setName($item->getName());
             $record->setType(DnsRecordType::tryFrom($item->getType()));

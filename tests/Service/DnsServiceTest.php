@@ -63,9 +63,4 @@ class DnsServiceTest extends TestCase
         $dnsService->getDnsPodDNS($domainWithoutAccount);
     }
 
-    public function testGetDnsPodDNS(): void
-    {
-        // 这个测试在实际环境中需要真实的凭据，所以我们跳过它
-        $this->markTestSkipped('需要真实外部依赖或更好的模拟方式');
-    }
 }

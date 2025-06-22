@@ -26,7 +26,7 @@ class DnsService
 
     public function getDnsPodDNS(DnsDomain $domain): DnspodClient
     {
-        if (!$domain->getAccount()) {
+        if ($domain->getAccount() === null) {
             throw new \RuntimeException('域名未绑定账号');
         }
 
@@ -59,7 +59,7 @@ class DnsService
         // https://console.cloud.tencent.com/api/explorer?Product=dnspod&Version=2021-03-23&Action=ModifyRecord
         $req = new CreateRecordRequest();
 
-        $parseDomain = Domain::fromIDNA2008($record->getRecord());
+        $parseDomain = Domain::fromIDNA2008($record->getName() . '.' . $domain->getName());
         $result = $this->topLevelDomains->resolve($parseDomain);
 
         $req->Domain = $domain->getName();
@@ -78,7 +78,7 @@ class DnsService
             'resp' => $resp,
         ]);
 
-        $record->setRecordId($resp->RecordId);
+        $record->setRecordId((string) $resp->RecordId);
     }
 
     /**
@@ -94,7 +94,7 @@ class DnsService
         // https://console.cloud.tencent.com/api/explorer?Product=dnspod&Version=2021-03-23&Action=ModifyRecord
         $req = new ModifyRecordRequest();
 
-        $parseDomain = Domain::fromIDNA2008($record->getRecord());
+        $parseDomain = Domain::fromIDNA2008($record->getName() . '.' . $domain->getName());
         $result = $this->topLevelDomains->resolve($parseDomain);
 
         $req->Domain = $domain->getName();
@@ -122,11 +122,11 @@ class DnsService
         $domain = $record->getDomain();
 
         $client = $this->getDnsPodDNS($domain);
-        if ($record->getRecordId()) {
+        if ($record->getRecordId() !== null) {
             $req = new DeleteRecordRequest();
 
             $req->Domain = $domain->getName();
-            $req->RecordId = $record->getRecordId();
+            $req->RecordId = (int) $record->getRecordId();
 
             // 返回的resp是一个DeleteRecordResponse的实例，与请求对象对应
             $resp = $client->DeleteRecord($req);

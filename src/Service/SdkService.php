@@ -17,7 +17,7 @@ class SdkService
     public function getHttpProfile(?string $endpoint = null): HttpProfile
     {
         $httpProfile = new HttpProfile();
-        if ($endpoint) {
+        if ($endpoint !== null) {
             $httpProfile->setEndpoint($endpoint);
         }
         return $httpProfile;
@@ -26,7 +26,7 @@ class SdkService
     public function getClientProfile(?HttpProfile $httpProfile = null): ClientProfile
     {
         $clientProfile = new ClientProfile();
-        if ($httpProfile) {
+        if ($httpProfile !== null) {
             $clientProfile->setHttpProfile($httpProfile);
         }
         return $clientProfile;

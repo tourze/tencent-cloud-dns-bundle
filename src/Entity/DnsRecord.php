@@ -9,14 +9,14 @@ use TencentCloudDnsBundle\Repository\DnsRecordRepository;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
-use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
-use Tourze\DoctrineUserBundle\Attribute\UpdatedByColumn;
+use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 
 #[ORM\Entity(repositoryClass: DnsRecordRepository::class)]
 #[ORM\Table(name: 'tencent_cloud_dns_record', options: ['comment' => '域名解析记录'])]
-class DnsRecord
+class DnsRecord implements \Stringable
 {
     use TimestampableAware;
+    use BlameableAware;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
@@ -29,16 +29,16 @@ class DnsRecord
     #[ORM\Column(length: 200, options: ['comment' => '前缀'])]
     private string $name;
 
-    #[ORM\Column(length: 500)]
+    #[ORM\Column(length: 500, options: ['comment' => '解析值'])]
     private ?string $value = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 20, options: ['comment' => '远程记录ID'])]
     private ?string $recordId = null;
 
-    #[ORM\Column(length: 10, enumType: DnsRecordType::class)]
+    #[ORM\Column(length: 10, enumType: DnsRecordType::class, options: ['comment' => '记录类型'])]
     private DnsRecordType $type;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true, options: ['comment' => 'TTL值'])]
     private ?int $ttl = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true, options: ['comment' => '上下文'])]
@@ -49,13 +49,10 @@ class DnsRecord
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
     private ?bool $valid = false;
 
-    #[CreatedByColumn]
-    #[ORM\Column(nullable: true, options: ['comment' => '创建人'])]
-    private ?string $createdBy = null;
-
-    #[UpdatedByColumn]
-    #[ORM\Column(nullable: true, options: ['comment' => '更新人'])]
-    private ?string $updatedBy = null;
+    public function __toString(): string
+    {
+        return sprintf('%s.%s (%s)', $this->name, $this->domain?->getName() ?? '', $this->type->value);
+    }
 
     public function getId(): ?int
     {
@@ -157,27 +154,5 @@ class DnsRecord
 
         return $this;
     }
+}
 
-    public function setCreatedBy(?string $createdBy): self
-    {
-        $this->createdBy = $createdBy;
-
-        return $this;
-    }
-
-    public function getCreatedBy(): ?string
-    {
-        return $this->createdBy;
-    }
-
-    public function setUpdatedBy(?string $updatedBy): self
-    {
-        $this->updatedBy = $updatedBy;
-
-        return $this;
-    }
-
-    public function getUpdatedBy(): ?string
-    {
-        return $this->updatedBy;
-    }}
