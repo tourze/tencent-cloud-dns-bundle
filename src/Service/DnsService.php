@@ -15,6 +15,7 @@ use TencentCloud\Dnspod\V20210323\Models\ModifyRecordRequest;
 use TencentCloudDnsBundle\Entity\DnsDomain;
 use TencentCloudDnsBundle\Entity\DnsRecord;
 use TencentCloudDnsBundle\Enum\DnsRecordType;
+use TencentCloudDnsBundle\Exception\DnsServiceException;
 
 class DnsService
 {
@@ -27,7 +28,7 @@ class DnsService
     public function getDnsPodDNS(DnsDomain $domain): DnspodClient
     {
         if ($domain->getAccount() === null) {
-            throw new \RuntimeException('域名未绑定账号');
+            throw new DnsServiceException('域名未绑定账号');
         }
 
         // 实例化一个认证对象，入参需要传入腾讯云账户 SecretId 和 SecretKey，此处还需注意密钥对的保密
