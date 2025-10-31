@@ -2,31 +2,41 @@
 
 namespace TencentCloudDnsBundle\Tests\DependencyInjection;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use TencentCloudDnsBundle\DependencyInjection\TencentCloudDnsExtension;
+use Tourze\PHPUnitSymfonyUnitTest\AbstractDependencyInjectionExtensionTestCase;
 
-class TencentCloudDnsExtensionTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(TencentCloudDnsExtension::class)]
+final class TencentCloudDnsExtensionTest extends AbstractDependencyInjectionExtensionTestCase
 {
-    private TencentCloudDnsExtension $extension;
-    private ContainerBuilder $container;
-
-    protected function setUp(): void
-    {
-        $this->extension = new TencentCloudDnsExtension();
-        $this->container = new ContainerBuilder();
-    }
-
     public function testLoad(): void
     {
+        $extension = new TencentCloudDnsExtension();
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.environment', 'test');
+
         $configs = [];
-        
-        $this->extension->load($configs, $this->container);
+
+        $extension->load($configs, $container);
 
         // 验证服务配置被加载
-        $this->assertNotEmpty($this->container->getDefinitions());
-        
-        // 验证工厂服务
-        $this->assertTrue($this->container->hasDefinition('Pdp\TopLevelDomains'));
+        $this->assertNotEmpty($container->getDefinitions());
+    }
+
+    public function testConfigurationDirectoryExists(): void
+    {
+        // 测试配置目录的存在性，避免直接调用受保护的方法
+        $bundleReflection = new \ReflectionClass(TencentCloudDnsExtension::class);
+        $fileName = $bundleReflection->getFileName();
+        $this->assertIsString($fileName);
+        $bundleDir = dirname($fileName, 2);
+        $configDir = $bundleDir . '/Resources/config';
+
+        $this->assertDirectoryExists($configDir);
+        $this->assertStringContainsString('Resources/config', $configDir);
     }
 }

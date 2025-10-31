@@ -3,6 +3,7 @@
 namespace TencentCloudDnsBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,9 +19,11 @@ use TencentCloudDnsBundle\Repository\DnsRecordRepository;
 use TencentCloudDnsBundle\Service\DnsService;
 
 #[AsCommand(name: self::NAME, description: '同步域名信息到本地')]
+#[WithMonologChannel(channel: 'tencent_cloud_dns')]
 class SyncDomainRecordToLocalCommand extends Command
 {
     public const NAME = 'tencent-cloud-dns:sync-domain-record-to-local';
+
     public function __construct(
         private readonly DnsDomainRepository $domainRepository,
         private readonly DnsRecordRepository $recordRepository,
@@ -39,7 +42,7 @@ class SyncDomainRecordToLocalCommand extends Command
 
         // 实例化一个请求对象,每个接口都会对应一个request对象
         $req = new DescribeRecordListRequest();
-        $req->Domain = $domain->getName();
+        $req->Domain = $domain->getName() ?? '';
 
         // 返回的resp是一个DescribeRecordListResponse的实例，与请求对象对应
         $resp = $client->DescribeRecordList($req);
@@ -50,15 +53,15 @@ class SyncDomainRecordToLocalCommand extends Command
                 'domain' => $domain,
                 'recordId' => $item->getRecordId(),
             ]);
-            if ($record === null) {
+            if (null === $record) {
                 $record = new DnsRecord();
                 $record->setDomain($domain);
                 $record->setRecordId((string) $item->getRecordId());
             }
-            $record->setName($item->getName());
-            $record->setType(DnsRecordType::tryFrom($item->getType()));
-            $record->setValue($item->getValue());
-            $record->setTtl($item->getTTL());
+            $record->setName($item->getName() ?? '');
+            $record->setType(DnsRecordType::tryFrom($item->getType() ?? '') ?? DnsRecordType::A);
+            $record->setValue($item->getValue() ?? '');
+            $record->setTtl($item->getTTL() ?? 3600);
             $this->entityManager->persist($record);
             $this->entityManager->flush();
             $output->writeln("发现子域名：{$record->getName()}");

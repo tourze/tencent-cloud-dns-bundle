@@ -4,6 +4,7 @@ namespace TencentCloudDnsBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use TencentCloudDnsBundle\Repository\AccountRepository;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
@@ -19,20 +20,28 @@ class Account implements \Stringable
 {
     use TimestampableAware;
     use BlameableAware;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
-    private ?int $id = 0;
+    private ?int $id = null;
 
+    #[Assert\NotBlank(message: '名称不能为空')]
+    #[Assert\Length(max: 32, maxMessage: '名称长度不能超过{{ limit }}个字符')]
     #[ORM\Column(type: Types::STRING, length: 32, options: ['comment' => '名称'])]
     private ?string $name = null;
 
+    #[Assert\NotBlank(message: 'SecretId不能为空')]
+    #[Assert\Length(max: 64, maxMessage: 'SecretId长度不能超过{{ limit }}个字符')]
     #[ORM\Column(type: Types::STRING, length: 64, unique: true, options: ['comment' => 'SecretId'])]
     private ?string $secretId = null;
 
+    #[Assert\NotBlank(message: 'SecretKey不能为空')]
+    #[Assert\Length(max: 120, maxMessage: 'SecretKey长度不能超过{{ limit }}个字符')]
     #[ORM\Column(type: Types::STRING, length: 120, options: ['comment' => 'SecretKey'])]
     private ?string $secretKey = null;
 
+    #[Assert\Type(type: 'bool', message: '有效性必须是布尔值')]
     #[IndexColumn]
     #[TrackColumn]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
@@ -53,11 +62,9 @@ class Account implements \Stringable
         return $this->secretId;
     }
 
-    public function setSecretId(string $secretId): self
+    public function setSecretId(string $secretId): void
     {
         $this->secretId = $secretId;
-
-        return $this;
     }
 
     public function getSecretKey(): ?string
@@ -65,11 +72,9 @@ class Account implements \Stringable
         return $this->secretKey;
     }
 
-    public function setSecretKey(string $secretKey): self
+    public function setSecretKey(string $secretKey): void
     {
         $this->secretKey = $secretKey;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -77,11 +82,9 @@ class Account implements \Stringable
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
     public function isValid(): ?bool
@@ -89,11 +92,8 @@ class Account implements \Stringable
         return $this->valid;
     }
 
-    public function setValid(?bool $valid): self
+    public function setValid(?bool $valid): void
     {
         $this->valid = $valid;
-
-        return $this;
     }
 }
-

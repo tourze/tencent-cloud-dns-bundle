@@ -3,7 +3,9 @@
 namespace TencentCloudDnsBundle\Service;
 
 use Pdp\TopLevelDomains;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 
+#[Autoconfigure(public: true)]
 class DomainParserFactory
 {
     public function createIANATopLevelDomainListParser(): TopLevelDomains

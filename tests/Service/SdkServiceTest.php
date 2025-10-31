@@ -2,30 +2,38 @@
 
 namespace TencentCloudDnsBundle\Tests\Service;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
 use TencentCloud\Common\Profile\HttpProfile;
 use TencentCloudDnsBundle\Entity\Account;
 use TencentCloudDnsBundle\Service\SdkService;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
-class SdkServiceTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(SdkService::class)]
+#[RunTestsInSeparateProcesses]
+final class SdkServiceTest extends AbstractIntegrationTestCase
 {
     private SdkService $sdkService;
-    private Account $account;
 
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        $this->sdkService = new SdkService();
-
-        $this->account = new Account();
-        $this->account->setSecretId('test-secret-id');
-        $this->account->setSecretKey('test-secret-key');
+        $sdkService = self::getContainer()->get(SdkService::class);
+        $this->assertInstanceOf(SdkService::class, $sdkService);
+        $this->sdkService = $sdkService;
     }
 
     public function testGetCredential(): void
     {
-        $credential = $this->sdkService->getCredential($this->account);
+        $account = new Account();
+        $account->setSecretId('test-secret-id');
+        $account->setSecretKey('test-secret-key');
+
+        $credential = $this->sdkService->getCredential($account);
 
         $this->assertInstanceOf(Credential::class, $credential);
     }

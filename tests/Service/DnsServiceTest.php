@@ -2,52 +2,29 @@
 
 namespace TencentCloudDnsBundle\Tests\Service;
 
-use Pdp\TopLevelDomains;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use TencentCloudDnsBundle\Entity\Account;
 use TencentCloudDnsBundle\Entity\DnsDomain;
 use TencentCloudDnsBundle\Entity\DnsRecord;
 use TencentCloudDnsBundle\Enum\DnsRecordType;
 use TencentCloudDnsBundle\Service\DnsService;
-use TencentCloudDnsBundle\Service\DomainParserFactory;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
-class DnsServiceTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(DnsService::class)]
+#[RunTestsInSeparateProcesses]
+final class DnsServiceTest extends AbstractIntegrationTestCase
 {
-    private TopLevelDomains $topLevelDomains;
+    private DnsService $dnsService;
 
-    /** @var LoggerInterface&MockObject */
-    private $loggerMock;
-
-    private Account $account;
-    private DnsDomain $domain;
-    private DnsRecord $record;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        // 使用真实的 TopLevelDomains 实例而不是模拟对象
-        $factory = new DomainParserFactory();
-        $this->topLevelDomains = $factory->createIANATopLevelDomainListParser();
-
-        $this->loggerMock = $this->createMock(LoggerInterface::class);
-
-        // 创建测试数据
-        $this->account = new Account();
-        $this->account->setName('测试账号');
-        $this->account->setSecretId('test-secret-id');
-        $this->account->setSecretKey('test-secret-key');
-
-        $this->domain = new DnsDomain();
-        $this->domain->setName('example.com');
-        $this->domain->setAccount($this->account);
-
-        $this->record = new DnsRecord();
-        $this->record->setDomain($this->domain);
-        $this->record->setName('test');
-        $this->record->setValue('192.168.1.1');
-        $this->record->setType(DnsRecordType::A);
-        $this->record->setTtl(600);
+        $dnsService = self::getContainer()->get(DnsService::class);
+        $this->assertInstanceOf(DnsService::class, $dnsService);
+        $this->dnsService = $dnsService;
     }
 
     public function testGetDnsPodDNSThrowsExceptionWhenNoAccount(): void
@@ -55,12 +32,109 @@ class DnsServiceTest extends TestCase
         $domainWithoutAccount = new DnsDomain();
         $domainWithoutAccount->setName('example.com');
 
-        $dnsService = new DnsService($this->topLevelDomains, $this->loggerMock);
-
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('域名未绑定账号');
 
-        $dnsService->getDnsPodDNS($domainWithoutAccount);
+        $this->dnsService->getDnsPodDNS($domainWithoutAccount);
     }
 
+    public function testCreateRecord(): void
+    {
+        // 创建测试数据
+        $account = new Account();
+        $account->setName('测试账号');
+        $account->setSecretId('test-secret-id');
+        $account->setSecretKey('test-secret-key');
+
+        $domain = new DnsDomain();
+        $domain->setName('example.com');
+        $domain->setAccount($account);
+
+        $record = new DnsRecord();
+        $record->setDomain($domain);
+        $record->setName('test');
+        $record->setValue('192.168.1.1');
+        $record->setType(DnsRecordType::A);
+        $record->setTtl(600);
+
+        // 预期会抛出异常，因为我们使用的是测试凭证
+        $this->expectException(\Exception::class);
+        $this->dnsService->createRecord($record);
+    }
+
+    public function testUpdateRecord(): void
+    {
+        // 创建测试数据
+        $account = new Account();
+        $account->setName('测试账号');
+        $account->setSecretId('test-secret-id');
+        $account->setSecretKey('test-secret-key');
+
+        $domain = new DnsDomain();
+        $domain->setName('example.com');
+        $domain->setAccount($account);
+
+        $record = new DnsRecord();
+        $record->setDomain($domain);
+        $record->setName('test');
+        $record->setValue('192.168.1.1');
+        $record->setType(DnsRecordType::A);
+        $record->setTtl(600);
+
+        // 预期会抛出异常，因为我们使用的是测试凭证
+        $this->expectException(\Exception::class);
+        $this->dnsService->updateRecord($record);
+    }
+
+    public function testRemoveRecord(): void
+    {
+        // 创建测试数据
+        $account = new Account();
+        $account->setName('测试账号');
+        $account->setSecretId('test-secret-id');
+        $account->setSecretKey('test-secret-key');
+
+        $domain = new DnsDomain();
+        $domain->setName('example.com');
+        $domain->setAccount($account);
+
+        $record = new DnsRecord();
+        $record->setDomain($domain);
+        $record->setName('test');
+        $record->setValue('192.168.1.1');
+        $record->setType(DnsRecordType::A);
+        $record->setTtl(600);
+        $record->setRecordId('12345');
+
+        // 预期会抛出异常，因为我们使用的是测试凭证
+        $this->expectException(\Exception::class);
+        $this->dnsService->removeRecord($record);
+    }
+
+    public function testRemoveRecordWithoutRecordId(): void
+    {
+        // 创建测试数据
+        $account = new Account();
+        $account->setName('测试账号');
+        $account->setSecretId('test-secret-id');
+        $account->setSecretKey('test-secret-key');
+
+        $domain = new DnsDomain();
+        $domain->setName('example.com');
+        $domain->setAccount($account);
+
+        $record = new DnsRecord();
+        $record->setDomain($domain);
+        $record->setName('test');
+        $record->setValue('192.168.1.1');
+        $record->setType(DnsRecordType::A);
+        $record->setTtl(600);
+        $record->setRecordId(null);
+
+        // 当没有 recordId 时，应该不执行任何操作
+        $this->dnsService->removeRecord($record);
+
+        // 验证记录的 recordId 仍然为 null
+        $this->assertNull($record->getRecordId());
+    }
 }

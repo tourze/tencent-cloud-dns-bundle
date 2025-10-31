@@ -7,10 +7,12 @@ services:
   # 如果确认要使用自动扫描、自动注册，建议尽可能将要扫描的目录路径收缩，不要设置那么大的范围
   TencentCloudDnsBundle\Command\:
     resource: '../../Command/'
+  TencentCloudDnsBundle\Controller\:
+    resource: '../../Controller/'
   TencentCloudDnsBundle\Repository\:
     resource: '../../Repository/'
   TencentCloudDnsBundle\Service\:
     resource: '../../Service/'
 
   Pdp\TopLevelDomains:
-    factory: [TencentCloudDnsBundle\Service\DomainParserFactory, 'createIANATopLevelDomainListParser']
+    factory: ['@TencentCloudDnsBundle\Service\DomainParserFactory', 'createIANATopLevelDomainListParser']

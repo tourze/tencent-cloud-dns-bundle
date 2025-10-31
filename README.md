@@ -2,10 +2,15 @@
 
 [![Latest Version](https://img.shields.io/packagist/v/tourze/tencent-cloud-dns-bundle.svg?style=flat-square)](https://packagist.org/packages/tourze/tencent-cloud-dns-bundle)
 [![Total Downloads](https://img.shields.io/packagist/dt/tourze/tencent-cloud-dns-bundle.svg?style=flat-square)](https://packagist.org/packages/tourze/tencent-cloud-dns-bundle)
+[![PHP Version](https://img.shields.io/packagist/php-v/tourze/tencent-cloud-dns-bundle.svg?style=flat-square)](https://packagist.org/packages/tourze/tencent-cloud-dns-bundle)
+[![License](https://img.shields.io/packagist/l/tourze/tencent-cloud-dns-bundle.svg?style=flat-square)](https://packagist.org/packages/tourze/tencent-cloud-dns-bundle)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/tourze/php-monorepo/ci.yml?style=flat-square)](https://github.com/tourze/php-monorepo/actions)
+[![Coverage Status](https://img.shields.io/codecov/c/github/tourze/php-monorepo.svg?style=flat-square)](https://codecov.io/gh/tourze/php-monorepo)
 
 [English](README.md) | [中文](README.zh-CN.md)
 
-A Symfony bundle that provides integration with Tencent Cloud DNS (DNSPod) service for managing domain records.
+A Symfony bundle that provides integration with Tencent Cloud DNS (DNSPod) service 
+for managing domain records.
 
 ## Features
 
@@ -19,8 +24,8 @@ A Symfony bundle that provides integration with Tencent Cloud DNS (DNSPod) servi
 ## Requirements
 
 - PHP 8.1 or higher
-- Symfony 6.4 or higher
-- Doctrine ORM 2.20/3.0 or higher
+- Symfony 7.3 or higher
+- Doctrine ORM 3.0 or higher
 - Tencent Cloud account with DNS service enabled
 
 ## Installation
@@ -29,11 +34,13 @@ A Symfony bundle that provides integration with Tencent Cloud DNS (DNSPod) servi
 composer require tourze/tencent-cloud-dns-bundle
 ```
 
-The bundle uses Symfony's auto-configuration, so it will be automatically enabled once installed.
+The bundle uses Symfony's auto-configuration, so it will be automatically 
+enabled once installed.
 
 ## Configuration
 
-This bundle doesn't require any specific configuration in your Symfony application. It uses Doctrine entities to store configuration and data.
+This bundle doesn't require any specific configuration in your Symfony 
+application. It uses Doctrine entities to store configuration and data.
 
 ## Usage
 
@@ -101,7 +108,9 @@ bin/console tencent-cloud-dns:sync-domain-record-to-local
 
 ## How It Works
 
-The bundle provides a set of Doctrine entities to store DNS configuration and records. It uses the Tencent Cloud SDK to communicate with the DNSPod API for creating, updating, and deleting DNS records.
+The bundle provides a set of Doctrine entities to store DNS configuration and 
+records. It uses the Tencent Cloud SDK to communicate with the DNSPod API for 
+creating, updating, and deleting DNS records.
 
 The workflow is as follows:
 
@@ -110,6 +119,62 @@ The workflow is as follows:
 3. Create DnsRecord entities linked to the domain
 4. The bundle will automatically synchronize the records with Tencent Cloud DNS
 
+## Advanced Usage
+
+### Using the DNS Service
+
+You can inject the DNS service to programmatically manage DNS records:
+
+```php
+use TencentCloudDnsBundle\Service\DnsService;
+
+class MyDnsController
+{
+    public function __construct(private DnsService $dnsService)
+    {
+    }
+
+    public function updateRecord(): Response
+    {
+        // Use the service to interact with Tencent Cloud DNS
+        $result = $this->dnsService->updateRecord($record);
+        // Handle the result
+    }
+}
+```
+
+### Custom Domain Parser
+
+The bundle includes a domain parser factory for handling domain validation:
+
+```php
+use TencentCloudDnsBundle\Service\DomainParserFactory;
+
+$parser = $this->domainParserFactory->create();
+$domain = $parser->parse('example.com');
+```
+
+## Security
+
+- **API Keys**: Store your Tencent Cloud API keys securely. Never commit 
+  them to version control.
+- **Validation**: All entity properties include validation constraints to 
+  prevent invalid data.
+- **Access Control**: Implement proper access control in your application 
+  to restrict DNS management operations.
+
+### Security Best Practices
+
+1. Use environment variables for API credentials
+2. Implement proper user authentication and authorization
+3. Validate all user inputs before processing
+4. Use HTTPS for all API communications
+5. Regularly rotate your API keys
+
+## Contributing
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute to this project.
+
 ## License
 
-This bundle is available under the MIT license. See the LICENSE file for more information.
+The MIT License (MIT). Please see [License File](LICENSE) for more information.

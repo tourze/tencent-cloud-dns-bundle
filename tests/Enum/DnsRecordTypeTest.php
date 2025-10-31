@@ -2,10 +2,15 @@
 
 namespace TencentCloudDnsBundle\Tests\Enum;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use TencentCloudDnsBundle\Enum\DnsRecordType;
+use Tourze\PHPUnitEnum\AbstractEnumTestCase;
 
-class DnsRecordTypeTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(DnsRecordType::class)]
+final class DnsRecordTypeTest extends AbstractEnumTestCase
 {
     public function testEnumValues(): void
     {
@@ -48,5 +53,24 @@ class DnsRecordTypeTest extends TestCase
         $this->assertSame(DnsRecordType::CNAME, DnsRecordType::from('CNAME'));
         $this->assertSame(DnsRecordType::NS, DnsRecordType::from('NS'));
         $this->assertSame(DnsRecordType::URI, DnsRecordType::from('URI'));
+    }
+
+    public function testToArray(): void
+    {
+        $result = DnsRecordType::A->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertCount(2, $result);
+
+        $this->assertArrayHasKey('value', $result);
+        $this->assertArrayHasKey('label', $result);
+
+        $this->assertEquals('A', $result['value']);
+        $this->assertEquals('A记录', $result['label']);
+
+        // 测试其他枚举值
+        $mxResult = DnsRecordType::MX->toArray();
+        $this->assertEquals('MX', $mxResult['value']);
+        $this->assertEquals('MX记录', $mxResult['label']);
     }
 }

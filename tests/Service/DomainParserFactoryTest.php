@@ -2,17 +2,27 @@
 
 namespace TencentCloudDnsBundle\Tests\Service;
 
+use Pdp\Domain;
 use Pdp\TopLevelDomains;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use TencentCloudDnsBundle\Service\DomainParserFactory;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
-class DomainParserFactoryTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(DomainParserFactory::class)]
+#[RunTestsInSeparateProcesses]
+final class DomainParserFactoryTest extends AbstractIntegrationTestCase
 {
     private DomainParserFactory $factory;
 
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        $this->factory = new DomainParserFactory();
+        $factory = self::getContainer()->get(DomainParserFactory::class);
+        $this->assertInstanceOf(DomainParserFactory::class, $factory);
+        $this->factory = $factory;
     }
 
     public function testCreateIANATopLevelDomainListParser(): void
@@ -22,7 +32,7 @@ class DomainParserFactoryTest extends TestCase
         $this->assertInstanceOf(TopLevelDomains::class, $parser);
 
         // 测试解析常见域名
-        $domain = \Pdp\Domain::fromIDNA2008('example.com');
+        $domain = Domain::fromIDNA2008('example.com');
         $result = $parser->resolve($domain);
 
         $this->assertNotNull($result);
