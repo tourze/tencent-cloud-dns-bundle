@@ -18,6 +18,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use TencentCloudDnsBundle\Entity\Account;
 
+/**
+ * @template-extends AbstractCrudController<Account>
+ */
 #[AdminCrud(
     routePath: '/tencent-cloud-dns/account',
     routeName: 'tencent_cloud_dns_account'

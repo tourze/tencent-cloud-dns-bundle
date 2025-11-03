@@ -13,6 +13,8 @@ use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 
 /**
  * 密钥可前往官网控制台 https://console.cloud.tencent.com/cam/capi 进行获取
+ *
+ * @phpstan-property-read int|null $id Doctrine-managed ID, assigned after persistence
  */
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
 #[ORM\Table(name: 'tencent_cloud_dns_account', options: ['comment' => '腾讯云账号'])]

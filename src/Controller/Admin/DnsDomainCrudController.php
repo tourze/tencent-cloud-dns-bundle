@@ -20,6 +20,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use TencentCloudDnsBundle\Entity\DnsDomain;
 
+/**
+ * @template-extends AbstractCrudController<DnsDomain>
+ */
 #[AdminCrud(
     routePath: '/tencent-cloud-dns/domain',
     routeName: 'tencent_cloud_dns_domain'

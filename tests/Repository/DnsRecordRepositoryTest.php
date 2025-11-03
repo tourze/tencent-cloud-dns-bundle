@@ -12,6 +12,7 @@ use TencentCloudDnsBundle\Repository\DnsRecordRepository;
 use Tourze\PHPUnitSymfonyKernelTest\AbstractRepositoryTestCase;
 
 /**
+ * @template-extends AbstractRepositoryTestCase<DnsRecord>
  * @internal
  */
 #[CoversClass(DnsRecordRepository::class)]
@@ -53,7 +54,7 @@ final class DnsRecordRepositoryTest extends AbstractRepositoryTestCase
         return $entity;
     }
 
-    protected function getRepository(): DnsRecordRepository
+    protected function getRepository(): \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository
     {
         $repository = self::getContainer()->get(DnsRecordRepository::class);
         $this->assertInstanceOf(DnsRecordRepository::class, $repository);
@@ -63,7 +64,9 @@ final class DnsRecordRepositoryTest extends AbstractRepositoryTestCase
 
     private function getDnsRecordRepository(): DnsRecordRepository
     {
-        return $this->getRepository();
+        /** @var DnsRecordRepository $repository */
+        $repository = $this->getRepository();
+        return $repository;
     }
 
     public function testRepositoryInstance(): void
@@ -82,7 +85,6 @@ final class DnsRecordRepositoryTest extends AbstractRepositoryTestCase
         // 测试空数据库的情况
         $repository = $this->getDnsRecordRepository();
         $records = $repository->findAll();
-        $this->assertIsArray($records);
         $this->assertEmpty($records);
 
         // 创建账户、域名和记录

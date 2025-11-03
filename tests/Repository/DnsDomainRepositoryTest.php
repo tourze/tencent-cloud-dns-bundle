@@ -12,6 +12,7 @@ use TencentCloudDnsBundle\Repository\DnsDomainRepository;
 use Tourze\PHPUnitSymfonyKernelTest\AbstractRepositoryTestCase;
 
 /**
+ * @template-extends AbstractRepositoryTestCase<DnsDomain>
  * @internal
  */
 #[CoversClass(DnsDomainRepository::class)]
@@ -44,7 +45,7 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
         return $entity;
     }
 
-    protected function getRepository(): DnsDomainRepository
+    protected function getRepository(): \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository
     {
         $repository = self::getContainer()->get(DnsDomainRepository::class);
         $this->assertInstanceOf(DnsDomainRepository::class, $repository);
@@ -54,7 +55,9 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
 
     private function getDnsDomainRepository(): DnsDomainRepository
     {
-        return $this->getRepository();
+        /** @var DnsDomainRepository $repository */
+        $repository = $this->getRepository();
+        return $repository;
     }
 
     public function testRepositoryInstance(): void
@@ -72,7 +75,6 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
         // 测试空数据库的情况
         $repository = $this->getDnsDomainRepository();
         $domains = $repository->findAll();
-        $this->assertIsArray($domains);
         $this->assertEmpty($domains);
 
         // 创建账户和域名
@@ -267,18 +269,15 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
 
         // 测试无条件查找
         $allDomains = $repository->findBy([]);
-        $this->assertIsArray($allDomains);
         $this->assertCount(2, $allDomains);
 
         // 测试条件查找
         $validDomains = $repository->findBy(['valid' => true]);
-        $this->assertIsArray($validDomains);
         $this->assertCount(1, $validDomains);
         $this->assertEquals('findby-test1.com', $validDomains[0]->getName());
 
         // 测试不匹配条件
         $nonExistentDomains = $repository->findBy(['name' => 'non-existent.com']);
-        $this->assertIsArray($nonExistentDomains);
         $this->assertEmpty($nonExistentDomains);
     }
 
@@ -307,7 +306,6 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
 
         // 测试分页
         $domains = $repository->findBy(['valid' => true], ['name' => 'ASC'], 2, 1);
-        $this->assertIsArray($domains);
         $this->assertLessThanOrEqual(2, count($domains));
     }
 
@@ -414,12 +412,10 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
 
         // 测试通过关联实体查询
         $account1Domains = $repository->findBy(['account' => $account1]);
-        $this->assertIsArray($account1Domains);
         $this->assertCount(1, $account1Domains);
         $this->assertEquals('account1-domain.com', $account1Domains[0]->getName());
 
         $account2Domains = $repository->findBy(['account' => $account2]);
-        $this->assertIsArray($account2Domains);
         $this->assertCount(1, $account2Domains);
         $this->assertEquals('account2-domain.com', $account2Domains[0]->getName());
     }
@@ -449,7 +445,6 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
 
         // 测试查询空值字段
         $nullValidDomains = $repository->findBy(['valid' => null]);
-        $this->assertIsArray($nullValidDomains);
         $this->assertGreaterThanOrEqual(1, count($nullValidDomains));
 
         foreach ($nullValidDomains as $nullValidDomain) {
@@ -459,7 +454,6 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
 
         // 测试查询 context 为空的记录
         $nullContextDomains = $repository->findBy(['context' => null]);
-        $this->assertIsArray($nullContextDomains);
         $this->assertGreaterThanOrEqual(1, count($nullContextDomains));
 
         foreach ($nullContextDomains as $nullContextDomain) {
@@ -493,11 +487,9 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
 
         // 测试计数空值字段
         $nullValidCount = $repository->count(['valid' => null]);
-        $this->assertIsInt($nullValidCount);
         $this->assertGreaterThanOrEqual(1, $nullValidCount);
 
         $nullContextCount = $repository->count(['context' => null]);
-        $this->assertIsInt($nullContextCount);
         $this->assertGreaterThanOrEqual(1, $nullContextCount);
     }
 
@@ -669,7 +661,6 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
         self::getEntityManager()->flush();
 
         $count = $repository->count(['valid' => null]);
-        $this->assertIsInt($count);
         $this->assertEquals(1, $count);
     }
 
@@ -696,7 +687,6 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
         self::getEntityManager()->flush();
 
         $count = $repository->count(['context' => null]);
-        $this->assertIsInt($count);
         $this->assertEquals(1, $count);
     }
 
@@ -722,7 +712,6 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
         self::getEntityManager()->flush();
 
         $results = $repository->findBy(['valid' => null]);
-        $this->assertIsArray($results);
         $this->assertCount(1, $results);
         $this->assertInstanceOf(DnsDomain::class, $results[0]);
         $this->assertNull($results[0]->isValid());
@@ -751,7 +740,6 @@ final class DnsDomainRepositoryTest extends AbstractRepositoryTestCase
         self::getEntityManager()->flush();
 
         $results = $repository->findBy(['context' => null]);
-        $this->assertIsArray($results);
         $this->assertCount(1, $results);
         $this->assertInstanceOf(DnsDomain::class, $results[0]);
         $this->assertNull($results[0]->getContext());

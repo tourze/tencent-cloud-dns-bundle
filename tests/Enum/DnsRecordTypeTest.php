@@ -59,7 +59,6 @@ final class DnsRecordTypeTest extends AbstractEnumTestCase
     {
         $result = DnsRecordType::A->toArray();
 
-        $this->assertIsArray($result);
         $this->assertCount(2, $result);
 
         $this->assertArrayHasKey('value', $result);

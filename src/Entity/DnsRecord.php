@@ -12,6 +12,9 @@ use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
 use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 
+/**
+ * @phpstan-property-read int|null $id Doctrine-managed ID, assigned after persistence
+ */
 #[ORM\Entity(repositoryClass: DnsRecordRepository::class)]
 #[ORM\Table(name: 'tencent_cloud_dns_record', options: ['comment' => '域名解析记录'])]
 class DnsRecord implements \Stringable

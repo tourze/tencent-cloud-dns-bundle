@@ -9,6 +9,7 @@ use TencentCloudDnsBundle\Repository\AccountRepository;
 use Tourze\PHPUnitSymfonyKernelTest\AbstractRepositoryTestCase;
 
 /**
+ * @template-extends AbstractRepositoryTestCase<Account>
  * @internal
  */
 #[CoversClass(AccountRepository::class)]
@@ -31,7 +32,7 @@ final class AccountRepositoryTest extends AbstractRepositoryTestCase
         return $entity;
     }
 
-    protected function getRepository(): AccountRepository
+    protected function getRepository(): \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository
     {
         $repository = self::getContainer()->get(AccountRepository::class);
         $this->assertInstanceOf(AccountRepository::class, $repository);
@@ -41,7 +42,9 @@ final class AccountRepositoryTest extends AbstractRepositoryTestCase
 
     private function getAccountRepository(): AccountRepository
     {
-        return $this->getRepository();
+        /** @var AccountRepository $repository */
+        $repository = $this->getRepository();
+        return $repository;
     }
 
     public function testRepositoryInstance(): void
@@ -58,7 +61,6 @@ final class AccountRepositoryTest extends AbstractRepositoryTestCase
         // 测试空数据库的情况
         $repository = $this->getAccountRepository();
         $accounts = $repository->findAll();
-        $this->assertIsArray($accounts);
         $this->assertEmpty($accounts);
 
         // 创建一个账户

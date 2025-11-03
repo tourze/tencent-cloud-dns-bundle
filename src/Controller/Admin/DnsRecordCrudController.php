@@ -24,6 +24,9 @@ use TencentCloudDnsBundle\Entity\DnsRecord;
 use TencentCloudDnsBundle\Enum\DnsRecordType;
 use Tourze\EasyAdminEnumFieldBundle\Field\EnumField;
 
+/**
+ * @template-extends AbstractCrudController<DnsRecord>
+ */
 #[AdminCrud(
     routePath: '/tencent-cloud-dns/record',
     routeName: 'tencent_cloud_dns_record'

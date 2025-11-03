@@ -35,7 +35,6 @@ final class DomainParserFactoryTest extends AbstractIntegrationTestCase
         $domain = Domain::fromIDNA2008('example.com');
         $result = $parser->resolve($domain);
 
-        $this->assertNotNull($result);
         $this->assertEquals('com', $result->suffix()->toString());
         $this->assertEquals('example.com', $result->domain()->toString());
     }
