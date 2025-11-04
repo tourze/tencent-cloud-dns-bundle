@@ -2,6 +2,7 @@
 
 namespace TencentCloudDnsBundle\Tests\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use TencentCloudDnsBundle\Entity\Account;
@@ -32,7 +33,7 @@ final class AccountRepositoryTest extends AbstractRepositoryTestCase
         return $entity;
     }
 
-    protected function getRepository(): \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository
+    protected function getRepository(): ServiceEntityRepository
     {
         $repository = self::getContainer()->get(AccountRepository::class);
         $this->assertInstanceOf(AccountRepository::class, $repository);
@@ -44,6 +45,7 @@ final class AccountRepositoryTest extends AbstractRepositoryTestCase
     {
         /** @var AccountRepository $repository */
         $repository = $this->getRepository();
+
         return $repository;
     }
 
