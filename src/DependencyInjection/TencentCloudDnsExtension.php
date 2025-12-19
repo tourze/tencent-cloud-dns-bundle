@@ -4,7 +4,7 @@ namespace TencentCloudDnsBundle\DependencyInjection;
 
 use Tourze\SymfonyDependencyServiceLoader\AutoExtension;
 
-class TencentCloudDnsExtension extends AutoExtension
+final class TencentCloudDnsExtension extends AutoExtension
 {
     protected function getConfigDir(): string
     {
